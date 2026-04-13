@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "783741792042",
+    "project_id": "fcm-inclass14-mad",
+    "storage_bucket": "fcm-inclass14-mad.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:783741792042:android:4f2c28f014abe883143853",
+        "android_client_info": {
+          "package_name": "com.example.firebase_cloud_messaging"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDOLMqdQKbnKdLHEO4yaJXR4TfRsedia_E"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

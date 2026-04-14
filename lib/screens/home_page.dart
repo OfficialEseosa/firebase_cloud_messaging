@@ -14,8 +14,7 @@ class _HomePageState extends State<HomePage> {
   final FCMService _fcmService = FCMService();
 
   String _statusText = 'Waiting for a cloud message...';
-  String _imagePath = 'assets/images/default.png';
-  String? _networkImageUrl;
+  String? _imageUrl;
   String? _fcmToken;
   String? _lastPayload;
 
@@ -34,19 +33,13 @@ class _HomePageState extends State<HomePage> {
   }
 
   void _handleMessage(RemoteMessage message) {
-    final imageUrl = message.data['image'] ?? message.notification?.android?.imageUrl;
-    final asset = message.data['asset'] ?? 'default';
-    final validAssets = ['default', 'promo', 'alert'];
-    final resolvedAsset = validAssets.contains(asset) ? asset : 'default';
+    final url = message.data['image'] ?? message.notification?.android?.imageUrl;
 
     setState(() {
       _statusText = message.notification?.title ?? 'Payload received';
-      if (imageUrl != null && imageUrl.toString().startsWith('http')) {
-        _networkImageUrl = imageUrl.toString();
-      } else {
-        _networkImageUrl = null;
-        _imagePath = 'assets/images/$resolvedAsset.png';
-      }
+      _imageUrl = (url != null && url.toString().startsWith('http'))
+          ? url.toString()
+          : null;
       _lastPayload =
           'Title: ${message.notification?.title ?? 'N/A'}\n'
           'Body: ${message.notification?.body ?? 'N/A'}\n'
@@ -94,40 +87,30 @@ class _HomePageState extends State<HomePage> {
             ),
             const SizedBox(height: 16),
 
-            // Image driven by payload
-            ClipRRect(
-              borderRadius: BorderRadius.circular(12),
-              child: _networkImageUrl != null
-                  ? Image.network(
-                      _networkImageUrl!,
+            // Image from payload URL
+            if (_imageUrl != null)
+              ClipRRect(
+                borderRadius: BorderRadius.circular(12),
+                child: Image.network(
+                  _imageUrl!,
+                  height: 200,
+                  fit: BoxFit.cover,
+                  loadingBuilder: (_, child, progress) {
+                    if (progress == null) return child;
+                    return Container(
                       height: 200,
-                      fit: BoxFit.cover,
-                      loadingBuilder: (_, child, progress) {
-                        if (progress == null) return child;
-                        return Container(
-                          height: 200,
-                          color: Colors.grey.shade100,
-                          child: const Center(child: CircularProgressIndicator()),
-                        );
-                      },
-                      errorBuilder: (_, __, ___) => Container(
-                        height: 200,
-                        color: Colors.grey.shade200,
-                        child: const Icon(Icons.broken_image, size: 60),
-                      ),
-                    )
-                  : Image.asset(
-                      _imagePath,
-                      height: 200,
-                      fit: BoxFit.cover,
-                      errorBuilder: (_, __, ___) => Container(
-                        height: 200,
-                        color: Colors.grey.shade200,
-                        child: const Icon(Icons.broken_image, size: 60),
-                      ),
-                    ),
-            ),
-            const SizedBox(height: 16),
+                      color: Colors.grey.shade100,
+                      child: const Center(child: CircularProgressIndicator()),
+                    );
+                  },
+                  errorBuilder: (_, __, ___) => Container(
+                    height: 200,
+                    color: Colors.grey.shade200,
+                    child: const Icon(Icons.broken_image, size: 60),
+                  ),
+                ),
+              ),
+            if (_imageUrl != null) const SizedBox(height: 16),
 
             // Last payload display
             if (_lastPayload != null) ...[

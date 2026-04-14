@@ -7,7 +7,7 @@ A Flutter app demonstrating Firebase Cloud Messaging (FCM) integration for CSC 4
 - Requests notification permissions on launch
 - Handles incoming FCM messages in all three app states: foreground, background, and terminated
 - Displays the FCM device token for use in Firebase Console test sends
-- Updates the UI (status text + image) based on the `asset` key in the message data payload
+- Updates the UI (status text + image) based on the message data payload
 
 ## Payload format
 
@@ -15,16 +15,15 @@ A Flutter app demonstrating Firebase Cloud Messaging (FCM) integration for CSC 4
 {
   "notification": {
     "title": "Activity 14 Test",
-    "body": "Show the promo asset now"
+    "body": "Check out this image"
   },
   "data": {
-    "asset": "promo",
-    "action": "show_animation"
+    "image": "https://example.com/photo.png"
   }
 }
 ```
 
-Supported `asset` values: `default`, `promo`, `alert`.
+The `image` key accepts any public URL. The image displays in the app when a message is received.
 
 ## Firebase project
 

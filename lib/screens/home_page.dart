@@ -93,18 +93,17 @@ class _HomePageState extends State<HomePage> {
                 borderRadius: BorderRadius.circular(12),
                 child: Image.network(
                   _imageUrl!,
-                  height: 200,
-                  fit: BoxFit.cover,
+                  fit: BoxFit.contain,
                   loadingBuilder: (_, child, progress) {
                     if (progress == null) return child;
                     return Container(
-                      height: 200,
+                      height: 150,
                       color: Colors.grey.shade100,
                       child: const Center(child: CircularProgressIndicator()),
                     );
                   },
                   errorBuilder: (_, __, ___) => Container(
-                    height: 200,
+                    height: 150,
                     color: Colors.grey.shade200,
                     child: const Icon(Icons.broken_image, size: 60),
                   ),

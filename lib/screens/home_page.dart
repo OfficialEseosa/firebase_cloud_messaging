@@ -1,5 +1,6 @@
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import '../services/fcm_service.dart';
 
 class HomePage extends StatefulWidget {
@@ -48,6 +49,7 @@ class _HomePageState extends State<HomePage> {
 
   void _copyToken() {
     if (_fcmToken != null) {
+      Clipboard.setData(ClipboardData(text: _fcmToken!));
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(content: Text('Token copied to clipboard')),
       );

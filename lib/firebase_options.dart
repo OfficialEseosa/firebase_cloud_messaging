@@ -59,4 +59,5 @@ class DefaultFirebaseOptions {
     projectId: 'fcm-inclass14-mad',
     storageBucket: 'fcm-inclass14-mad.firebasestorage.app',
   );
+
 }

@@ -15,6 +15,7 @@ class _HomePageState extends State<HomePage> {
 
   String _statusText = 'Waiting for a cloud message...';
   String _imagePath = 'assets/images/default.png';
+  String? _networkImageUrl;
   String? _fcmToken;
   String? _lastPayload;
 
@@ -33,13 +34,19 @@ class _HomePageState extends State<HomePage> {
   }
 
   void _handleMessage(RemoteMessage message) {
+    final imageUrl = message.data['image'] ?? message.notification?.android?.imageUrl;
     final asset = message.data['asset'] ?? 'default';
     final validAssets = ['default', 'promo', 'alert'];
     final resolvedAsset = validAssets.contains(asset) ? asset : 'default';
 
     setState(() {
       _statusText = message.notification?.title ?? 'Payload received';
-      _imagePath = 'assets/images/$resolvedAsset.png';
+      if (imageUrl != null && imageUrl.toString().startsWith('http')) {
+        _networkImageUrl = imageUrl.toString();
+      } else {
+        _networkImageUrl = null;
+        _imagePath = 'assets/images/$resolvedAsset.png';
+      }
       _lastPayload =
           'Title: ${message.notification?.title ?? 'N/A'}\n'
           'Body: ${message.notification?.body ?? 'N/A'}\n'
@@ -90,16 +97,35 @@ class _HomePageState extends State<HomePage> {
             // Image driven by payload
             ClipRRect(
               borderRadius: BorderRadius.circular(12),
-              child: Image.asset(
-                _imagePath,
-                height: 200,
-                fit: BoxFit.cover,
-                errorBuilder: (_, __, ___) => Container(
-                  height: 200,
-                  color: Colors.grey.shade200,
-                  child: const Icon(Icons.broken_image, size: 60),
-                ),
-              ),
+              child: _networkImageUrl != null
+                  ? Image.network(
+                      _networkImageUrl!,
+                      height: 200,
+                      fit: BoxFit.cover,
+                      loadingBuilder: (_, child, progress) {
+                        if (progress == null) return child;
+                        return Container(
+                          height: 200,
+                          color: Colors.grey.shade100,
+                          child: const Center(child: CircularProgressIndicator()),
+                        );
+                      },
+                      errorBuilder: (_, __, ___) => Container(
+                        height: 200,
+                        color: Colors.grey.shade200,
+                        child: const Icon(Icons.broken_image, size: 60),
+                      ),
+                    )
+                  : Image.asset(
+                      _imagePath,
+                      height: 200,
+                      fit: BoxFit.cover,
+                      errorBuilder: (_, __, ___) => Container(
+                        height: 200,
+                        color: Colors.grey.shade200,
+                        child: const Icon(Icons.broken_image, size: 60),
+                      ),
+                    ),
             ),
             const SizedBox(height: 16),
 
